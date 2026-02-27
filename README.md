@@ -1,61 +1,76 @@
+<div align="center">
+
+![ROTTWEILER](logo.png)
+
 # ROTTWEILER
 
-![ROTTWEILER Logo](/logo-rott.png)
+**Dark Web Intelligence Engine**
 
-**Advanced Dark Web Intelligence and OSINT Engine**
+Multi-engine Tor search with AI-powered analysis. Hunt across hidden services, extract onion links, and generate actionable intelligence.
 
-A production-grade tool for systematic Tor network reconnaissance, onion service discovery, and intelligence analysis with integrated LLM-powered threat assessment.
+![Application Interface](1772214799371_image.png)
+
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
+[![Streamlit](https://img.shields.io/badge/streamlit-1.28+-red.svg)](https://streamlit.io/)
+[![Tor](https://img.shields.io/badge/tor-required-purple.svg)](https://www.torproject.org/)
+
+</div>
 
 ---
 
 ## Features
 
-- **Multi-Engine Search**: Queries Ahmia, Torch, and Onionland simultaneously
-- **Concurrent Scraping**: Thread-pooled content retrieval via Tor SOCKS proxy
-- **BM25 Ranking**: Relevance-based result ordering
-- **Multi-Provider LLM Analysis**: Support for Anthropic Claude, OpenAI GPT-4o, Google Gemini, Groq Llama 3.3 70B, and OpenRouter
-- **Monitoring System**: Tracks uptime and availability of discovered onion services
-- **Timeline Tracking**: Maintains operational chronology
-- **Dockerized Deployment**: Container-based deployment with integrated Tor daemon
-- **Secure Configuration**: Environment variable-based API key management
+- **13 Search Engines**: Ahmia, OnionLand, Torgle, Ahmesia, Torland, Find Tor, Excavator, Onionway, Tor66, OSS, Torgol, The Deep Searches, Dark Search
+- **Concurrent Scraping**: Multi-threaded content retrieval via Tor SOCKS proxy
+- **BM25 Ranking**: Query-relevance scoring for result ordering
+- **Multi-Provider LLM**: Anthropic Claude, OpenAI GPT-4o, Google Gemini, Groq Llama 3.3, OpenRouter
+- **Service Monitoring**: Track uptime and availability of discovered onion services
+- **Timeline Tracking**: Chronological logging of intelligence operations
+- **Dockerized**: Container-based deployment with integrated Tor daemon
 
 ---
 
 ## Architecture
+```
+┌─────────────────────────────────────────────┐
+│           STREAMLIT INTERFACE               │
+└──────────────────┬──────────────────────────┘
+                   │
+      ┌────────────┴────────────┐
+      │                         │
+ ┌────▼─────┐            ┌─────▼──────┐
+ │ SCRAPER  │            │    LLM     │
+ │  MODULE  │            │   MODULE   │
+ └────┬─────┘            └─────┬──────┘
+      │                        │
+ ┌────▼────────────────────────▼───┐
+ │      PIPELINE MODULE            │
+ │  • Tor Proxy                    │
+ │  • BM25 Ranking                 │
+ │  • Caching                      │
+ └────┬────────────────────────────┘
+      │
+ ┌────▼─────┐
+ │ MONITOR  │
+ └──────────┘
+```
 
-### Core Components
+### Components
 
-**Search Module** (`modules/scraper.py`)
-- Interfaces with Tor search engines
-- Extracts and validates .onion URLs
-- Handles Tor proxy configuration
-
-**Pipeline Module** (`modules/pipeline.py`)
-- Concurrent scraping engine with thread pools
-- Tor SOCKS proxy integration
-- BM25 ranking implementation
-- Caching layer for performance
-
-**Monitor Module** (`modules/monitor.py`)
-- Uptime tracking for discovered services
-- Availability checking via Tor proxy
-- Historical status logging
-
-**LLM Module** (`modules/llm.py`)
-- Abstraction layer for multiple providers
-- Unified interface for all supported LLMs
-- Context-aware prompt engineering
-
-**Streamlit Interface** (`app.py`)
-- Query input and configuration
-- Real-time search progress visualization
-- Result presentation and monitoring dashboard
+| Module | Function |
+|--------|----------|
+| **Scraper** | Multi-engine search, onion extraction |
+| **Pipeline** | Concurrent scraping, content processing, BM25 ranking |
+| **Monitor** | Uptime tracking, availability checks |
+| **LLM** | Multi-provider intelligence analysis |
+| **Interface** | Query input, result visualization |
 
 ---
 
 ## Installation
 
-### Local Installation
+### Local Setup
 ```bash
 # Clone repository
 git clone https://github.com/yourusername/rottweiler.git
@@ -65,85 +80,61 @@ cd rottweiler
 pip install -r requirements.txt
 
 # Install Tor
-# Ubuntu/Debian:
+# Ubuntu/Debian
 sudo apt update && sudo apt install tor
 sudo systemctl start tor
 
-# macOS:
+# macOS
 brew install tor
 brew services start tor
 
-# Configure environment variables
+# Configure environment
 cp .env.example .env
-# Edit .env with your API keys
+nano .env  # Add API keys
 
-# Run application
+# Launch
 streamlit run app.py
 ```
 
-### Docker Deployment
+### Docker Setup
 ```bash
-# Build containers
-docker-compose build
-
-# Start services
+# Build and run
 docker-compose up -d
 
 # Access at http://localhost:8501
 ```
 
 ### Environment Variables
-
-Create a `.env` file:
 ```env
-# LLM API Keys (configure only what you need)
-ANTHROPIC_API_KEY=your_key_here
-OPENAI_API_KEY=your_key_here
-GOOGLE_API_KEY=your_key_here
-GROQ_API_KEY=your_key_here
-OPENROUTER_API_KEY=your_key_here
+# .env configuration
+ANTHROPIC_API_KEY=sk-ant-xxxxx
+OPENAI_API_KEY=sk-xxxxx
+GOOGLE_API_KEY=xxxxx
+GROQ_API_KEY=gsk_xxxxx
+OPENROUTER_API_KEY=sk-or-xxxxx
 
-# Tor Configuration
 TOR_PROXY_HOST=localhost
 TOR_PROXY_PORT=9050
-
-# Application Settings
 MAX_WORKERS=10
 TIMEOUT_SECONDS=30
 ```
 
 ---
 
-## Usage
-
-1. Launch the application (local or Docker)
-2. Enter a search query related to your intelligence objective
-3. Select LLM provider and model
-4. Execute search and review results in Summary, Details, and Monitoring tabs
-
----
-
-## Security Considerations
-
-- All requests routed through Tor SOCKS proxy
-- No hardcoded credentials
-- Local-only data storage
-- Operators responsible for legal compliance
-- Use only for lawful security research
-
----
-
 ## Disclaimer
 
-ROTTWEILER is provided for lawful security research and threat intelligence. Users are solely responsible for compliance with applicable laws. This tool must not be used for illegal access, downloading illegal content, or any prohibited activities. No warranty provided.
+ROTTWEILER is provided for lawful security research and threat intelligence. Users are solely responsible for legal compliance. Do not use for illegal activities. No warranty provided.
 
 ---
 
-![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
-![Docker](https://img.shields.io/badge/docker-supported-blue.svg)
-![Streamlit](https://img.shields.io/badge/streamlit-1.28+-red.svg)
-![Tor](https://img.shields.io/badge/tor-required-purple.svg)
+## License
+
+MIT License - See [LICENSE](LICENSE)
 
 ---
 
-**MIT License** | For issues or contributions, open an issue on GitHub
+<div align="center">
+
+**ROTTWEILER** - Hunt. Analyze. Protect.
+
+</div>
