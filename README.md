@@ -2,9 +2,7 @@
 
 <img src="images/logo.png" alt="ROTTWEILER" width="200"/>
 
-# ROTTWEILER
-
-**Dark Web Intelligence Engine**
+# ROTTWEILER - **Dark Web Intelligence Engine**
 
 Multi-engine Tor search with AI-powered intelligence analysis and structured report generation.
 
