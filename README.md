@@ -87,6 +87,12 @@ graph TD
 ---
 
 ## Installation
+ROTTWEILER supports multiple LLM providers.
+You only need to configure the API keys for the providers you intend to use.
+
+If an API key is not provided, that provider will not function.
+
+All provider SDKs are included by default to ensure compatibility.
 
 ### Prerequisites
 
