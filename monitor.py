@@ -43,7 +43,6 @@ class SiteMonitor:
         Check a single site. Returns status dict.
         NO DATABASE - just returns the result.
         """
-        # Ensure URL has scheme
         if not url.startswith("http"):
             check_url = f"http://{url}"
         else:

@@ -13,7 +13,6 @@ from datetime import datetime, timedelta
 from typing import Dict, List
 
 
-# ── colour palette ─────────────────────────────────────────────────────────────
 COLOUR = {
     "online":  "#00ffaa",
     "offline": "#ff3355",
@@ -44,7 +43,6 @@ def _generate_slots_from_site(site: Dict, slots: int = 30) -> List[str]:
     the rest are 'unknown' (no historical data available).
     """
     status = site.get("status", "unknown")
-    # All slots unknown except the last one which reflects current status
     slot_data = ["unknown"] * (slots - 1) + [status]
     return slot_data
 
@@ -69,15 +67,12 @@ def uptime_bar_html(site: Dict, slots: int = 30, days: int = 7) -> str:
     query        = site.get("query", "")
     uptime_pct   = 100 if status == "online" else 0
 
-    # ── slot data ─────────────────────────────────────────────────────────────
     slot_data = _generate_slots_from_site(site, slots)
 
-    # ── status badge ──────────────────────────────────────────────────────────
     badge_colour = COLOUR.get(status, COLOUR["unknown"])
     badge_text   = status.upper()
     pulse_anim   = "animation:pulse 2s infinite;" if status == "online" else ""
 
-    # ── bar cells ─────────────────────────────────────────────────────────────
     bar_cells = ""
     for i, s in enumerate(slot_data):
         colour  = COLOUR[s]
@@ -93,7 +88,6 @@ def uptime_bar_html(site: Dict, slots: int = 30, days: int = 7) -> str:
             f'</div>'
         )
 
-    # ── query tag ─────────────────────────────────────────────────────────────
     tag_html = ""
     if query:
         tag_html = (
@@ -107,9 +101,6 @@ def uptime_bar_html(site: Dict, slots: int = 30, days: int = 7) -> str:
     safe_discovered   = _html.escape(discovered_at)
     resp_time_html    = f'<span style="font-size:11px;color:#1a4a3a;">{resp_time}ms</span>' if resp_time else ""
 
-    # Build as ONE concatenated string — Streamlit's markdown parser emits bare
-    # closing tags (</div>) as visible text when they appear on their own line
-    # inside a multi-line f-string passed to st.markdown(unsafe_allow_html=True).
     return (
         '<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}</style>'
         + f'<div style="background:#07080f;border:1px solid #0d3347;border-left:3px solid {badge_colour};padding:14px 18px 10px;margin:6px 0;font-family:\'Share Tech Mono\',monospace;">'

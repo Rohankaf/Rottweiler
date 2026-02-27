@@ -1,23 +1,18 @@
-# tor_search.py
-# Copyright 2026 rohahahan
-# Licensed under Apache 2.0
 
 import requests
 import random
 import re
 import urllib.parse
 import warnings
+
 from typing import List, Dict, Set
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
+from rank_bm25 import BM25Okapi
 
 warnings.filterwarnings("ignore")
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TOR SESSION  — with retry logic (from search.py)
-# ══════════════════════════════════════════════════════════════════════════════
 
 def get_tor_session() -> requests.Session:
     """
@@ -25,6 +20,7 @@ def get_tor_session() -> requests.Session:
     with automatic retries on server errors.
     """
     session = requests.Session()
+
     retry = Retry(
         total=3,
         read=3,
@@ -32,19 +28,19 @@ def get_tor_session() -> requests.Session:
         backoff_factor=0.5,
         status_forcelist=[500, 502, 503, 504],
     )
+
     adapter = HTTPAdapter(max_retries=retry)
+
     session.mount("http://", adapter)
     session.mount("https://", adapter)
+
     session.proxies = {
-        "http":  "socks5h://127.0.0.1:9050",
+        "http": "socks5h://127.0.0.1:9050",
         "https": "socks5h://127.0.0.1:9050",
     }
+
     return session
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# USER AGENT ROTATION
-# ══════════════════════════════════════════════════════════════════════════════
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
@@ -58,6 +54,7 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.3179.54",
 ]
 
+
 def get_headers() -> Dict[str, str]:
     return {
         "User-Agent": random.choice(USER_AGENTS),
@@ -66,35 +63,24 @@ def get_headers() -> Dict[str, str]:
         "Connection": "close",
     }
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# SEARCH ENGINE LIST  — kept identical to your original set
-# ══════════════════════════════════════════════════════════════════════════════
-
+# SEARCH ENGINE LIST
 SEARCH_ENGINES = [
-    {"name": "Ahmia",            "url": "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q={query}"},
-    {"name": "OnionLand",        "url": "http://3bbad7fauom4d6sgppalyqddsqbf5u5p56b5k5uk2zxsy3d6ey2jobad.onion/search?q={query}"},
-    {"name": "Torgle",           "url": "http://iy3544gmoeclh5de6gez2256v6pjh4omhpqdh2wpeeppjtvqmjhkfwad.onion/torgle/?query={query}"},
-    {"name": "Amnesia",          "url": "http://amnesia7u5odx5xbwtpnqk3edybgud5bmiagu75bnqx2crntw5kry7ad.onion/search?query={query}"},
-    {"name": "Torland",          "url": "http://torlbmqwtudkorme6prgfpmsnile7ug2zm4u3ejpcncxuhpu4k2j4kyd.onion/index.php?a=search&q={query}"},
-    {"name": "Find Tor",         "url": "http://findtorroveq5wdnipkaojfpqulxnkhblymc7aramjzajcvpptd4rjqd.onion/search?q={query}"},
-    {"name": "Excavator",        "url": "http://2fd6cemt4gmccflhm6imvdfvli3nf7zn6rfrwpsy7uhxrgbypvwf5fad.onion/search?query={query}"},
-    {"name": "Onionway",         "url": "http://oniwayzz74cv2puhsgx4dpjwieww4wdphsydqvf5q7eyz4myjvyw26ad.onion/search.php?s={query}"},
-    {"name": "Tor66",            "url": "http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/search?q={query}"},
-    {"name": "OSS",              "url": "http://3fzh7yuupdfyjhwt3ugzqqof6ulbcl27ecev33knxe3u7goi3vfn2qqd.onion/oss/index.php?search={query}"},
-    {"name": "Torgol",           "url": "http://torgolnpeouim56dykfob6jh5r2ps2j73enc42s2um4ufob3ny4fcdyd.onion/?q={query}"},
-    {"name": "The Deep Searches","url": "http://searchgf7gdtauh7bhnbyed4ivxqmuoat3nm6zfrg3ymkq6mtnpye3ad.onion/search?q={query}"},
-    {"name": "Torch",            "url": "http://rz6wxogwwbqdadlncnp2q26kbgcbbaqnitzueohj73fzmlx3mt467wqd.onion/search?q={query}"},
-    {"name": "Dark Search",      "url": "http://darkzqtmbdeauwq5mzcmgeeuhet42fhfjj4p5wbak3ofx2yqgecoeqyd.onion/search?q={query}"},
+    {"name": "Ahmia", "url": "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q={query}"},
+    {"name": "OnionLand", "url": "http://3bbad7fauom4d6sgppalyqddsqbf5u5p56b5k5uk2zxsy3d6ey2jobad.onion/search?q={query}"},
+    {"name": "Torgle", "url": "http://iy3544gmoeclh5de6gez2256v6pjh4omhpqdh2wpeeppjtvqmjhkfwad.onion/torgle/?query={query}"},
+    {"name": "Amnesia", "url": "http://amnesia7u5odx5xbwtpnqk3edybgud5bmiagu75bnqx2crntw5kry7ad.onion/search?query={query}"},
+    {"name": "Torland", "url": "http://torlbmqwtudkorme6prgfpmsnile7ug2zm4u3ejpcncxuhpu4k2j4kyd.onion/index.php?a=search&q={query}"},
+    {"name": "Find Tor", "url": "http://findtorroveq5wdnipkaojfpqulxnkhblymc7aramjzajcvpptd4rjqd.onion/search?q={query}"},
+    {"name": "Excavator", "url": "http://2fd6cemt4gmccflhm6imvdfvli3nf7zn6rfrwpsy7uhxrgbypvwf5fad.onion/search?query={query}"},
+    {"name": "Onionway", "url": "http://oniwayzz74cv2puhsgx4dpjwieww4wdphsydqvf5q7eyz4myjvyw26ad.onion/search.php?s={query}"},
+    {"name": "Tor66", "url": "http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/search?q={query}"},
+    {"name": "OSS", "url": "http://3fzh7yuupdfyjhwt3ugzqqof6ulbcl27ecev33knxe3u7goi3vfn2qqd.onion/oss/index.php?search={query}"},
+    {"name": "Torgol", "url": "http://torgolnpeouim56dykfob6jh5r2ps2j73enc42s2um4ufob3ny4fcdyd.onion/?q={query}"},
+    {"name": "The Deep Searches", "url": "http://searchgf7gdtauh7bhnbyed4ivxqmuoat3nm6zfrg3ymkq6mtnpye3ad.onion/search?q={query}"},
+    {"name": "Dark Search", "url": "http://darkzqtmbdeauwq5mzcmgeeuhet42fhfjj4p5wbak3ofx2yqgecoeqyd.onion/search?q={query}"},
 ]
 
-# Flat list of URL templates (backward compatible)
 DEFAULT_SEARCH_ENGINES = [e["url"] for e in SEARCH_ENGINES]
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BLACKLIST  — auto-built from engine domains + known junk
-# ══════════════════════════════════════════════════════════════════════════════
 
 _ENGINE_DOMAINS: Set[str] = set()
 for _e in SEARCH_ENGINES:
@@ -102,23 +88,16 @@ for _e in SEARCH_ENGINES:
     if _m:
         _ENGINE_DOMAINS.add(_m.group(1).lower())
 
-# Extra domains known to be aggregators/redirectors rather than real sites
 BLACKLISTED_DOMAINS: Set[str] = _ENGINE_DOMAINS | {
     "zqktlwiuavvvqqt4ybvgvi7tyo4hjl5xgfuvpdf6otjiycgwqbym2qad.onion",
     "zqktlwi4fecvo6ri.onion",
 }
 
-# URL fragments that indicate a navigation / search-engine-internal link
 _JUNK_PATH_PATTERNS = re.compile(
     r"/(search|login|register|signup|about|contact|help|faq|tos|privacy|"
     r"sitemap|robots|feed|rss|cdn|static|assets|img|js|css|fonts)/",
     re.IGNORECASE,
 )
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# URL VALIDATION & NORMALISATION
-# ══════════════════════════════════════════════════════════════════════════════
 
 def _extract_domain(url: str) -> str:
     try:
@@ -150,7 +129,6 @@ def _is_valid_result(href: str, title: str = "") -> bool:
     if not (len(host) == 56 or len(host) == 16):
         return False
 
-    # Reject if the href itself contains search-engine path fragments
     if "search" in href.lower():
         return False
 
@@ -158,7 +136,6 @@ def _is_valid_result(href: str, title: str = "") -> bool:
     if _JUNK_PATH_PATTERNS.search(parsed_path):
         return False
 
-    # Title must be meaningful (> 3 chars) — from search.py
     if title and len(title.strip()) <= 3:
         return False
 
@@ -174,10 +151,6 @@ def _normalise(url: str) -> str:
     except Exception:
         return url
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# SINGLE ENGINE SEARCH  — returns list of {title, link} dicts  (like search.py)
-# ══════════════════════════════════════════════════════════════════════════════
 
 def fetch_search_results(engine: Dict, query: str) -> List[Dict[str, str]]:
     """
@@ -241,38 +214,10 @@ def fetch_search_results(engine: Dict, query: str) -> List[Dict[str, str]]:
         print(f"[{name}] error: {str(e)[:100]}")
         return []
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# RELEVANCE SCORING
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _score(item: Dict[str, str], query: str) -> int:
-    score     = 0
-    url_lower = item["link"].lower()
-    ttl_lower = item.get("title", "").lower()
-    words     = query.lower().split()
-
-    for word in words:
-        if word in url_lower: score += 8
-        if word in ttl_lower: score += 12   # title match is a stronger signal
-
-    host = _extract_domain(item["link"]).replace(".onion", "")
-    if len(host) == 56: score += 3   # prefer v3 onions
-
-    path = urllib.parse.urlparse(item["link"]).path
-    if path and path != "/": score += 2
-
-    return score
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# MULTI-ENGINE RUNNER  — returns list of {title, link} dicts
-# ══════════════════════════════════════════════════════════════════════════════
-
 def get_search_results(query: str, max_workers: int = 10) -> List[Dict[str, str]]:
     """
     Query all engines concurrently.
-    Returns deduplicated, relevance-sorted list of {"title", "link"} dicts.
+    Returns deduplicated, BM25-ranked list of {"title", "link"} dicts.
     Used by pipeline.py and app.py.
     """
     raw: List[Dict[str, str]] = []
@@ -289,7 +234,6 @@ def get_search_results(query: str, max_workers: int = 10) -> List[Dict[str, str]
             except Exception as e:
                 print(f"[{engine['name']}] thread error: {e}")
 
-    # Deduplicate by link
     seen: Set[str] = set()
     unique: List[Dict[str, str]] = []
     for item in raw:
@@ -298,17 +242,23 @@ def get_search_results(query: str, max_workers: int = 10) -> List[Dict[str, str]
             seen.add(lnk)
             unique.append(item)
 
-    # Sort by relevance
-    unique.sort(key=lambda x: _score(x, query), reverse=True)
+    if not unique:
+        print(f"\n[ROTTWEILER] Raw: {len(raw)} → Unique: 0")
+        return unique
+
+    corpus = [f"{item.get('title', '')} {item['link']}".lower().split() for item in unique]
+    bm25 = BM25Okapi(corpus)
+    query_tokens = query.lower().split()
+    scores = bm25.get_scores(query_tokens)
+
+    for idx, item in enumerate(unique):
+        item["bm25_score"] = scores[idx]
+
+    unique.sort(key=lambda x: x["bm25_score"], reverse=True)
 
     print(f"\n[ROTTWEILER] Raw: {len(raw)} → Unique: {len(unique)}")
     return unique
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BACKWARD-COMPATIBLE WRAPPER  — run_search_agents() returns plain URL list
-# Called by old pipeline.py code that expects List[str]
-# ══════════════════════════════════════════════════════════════════════════════
 
 def run_search_agents(query: str, max_results: int = 50) -> List[str]:
     """

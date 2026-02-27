@@ -1,9 +1,3 @@
-# pipeline.py
-# Full discovery pipeline:
-#   1. Search all engines → get {title, link} dicts
-#   2. Scrape each result page → get {title, content, status, status_code}
-#   3. Build enriched site records
-#   4. Generate AI summary
 
 from tor_search import get_search_results
 from catching import scrape_multiple
@@ -12,23 +6,22 @@ from datetime import datetime
 
 def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
     """
-    Complete discovery pipeline.
+    Complete discovery pipeline - returns ONLINE sites only.
 
     Args:
         query       : search query string
-        monitor     : SiteMonitor instance (kept for API compat, not used for checking now —
-                      scraper handles connectivity detection)
+        monitor     : SiteMonitor instance (kept for API compat, not used)
         llm         : ClaudeAI instance
-        max_results : cap on total results
+        max_results : number of sites to search and scrape
 
     Returns dict:
         discovered    : int  — total unique links found by search engines
         active        : int  — sites that returned HTTP 200
-        all_sites     : list of enriched site dicts
+        all_sites     : list of all enriched site dicts
         active_sites  : list of online-only site dicts
         summary       : str  — AI intelligence brief
     """
-    # ── Step 1: Search ────────────────────────────────────────────────────
+    #  Step 1:search 
     print(f"\n[PIPELINE] Searching for: {query}")
     search_results = get_search_results(query, max_workers=10)
     search_results = search_results[:max_results]
@@ -43,11 +36,11 @@ def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
             "summary":     "No results found. Try a different query or check Tor connection.",
         }
 
-    # ── Step 2: Scrape each result ────────────────────────────────────────
+    # Step 2:Scrape each result
     print(f"[PIPELINE] Scraping {len(search_results)} sites via Tor...")
     scraped = scrape_multiple(search_results, max_workers=5)
 
-    # ── Step 3: Build enriched site records ───────────────────────────────
+    # Build site records
     ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     all_sites: list  = []
     active_sites: list = []
@@ -61,11 +54,11 @@ def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
         title     = data.get("title") or item.get("title") or url
         content   = data.get("content", "")
 
-        # Response time not measured here (Tor latency too variable for accuracy)
+        
         site_record = {
             "url":           url,
             "title":         title,
-            "content":       content,        # actual page text for AI analysis
+            "content":       content,      
             "status":        status,
             "status_code":   http_code,
             "response_time": 0,
@@ -81,7 +74,7 @@ def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
 
     print(f"[PIPELINE] Online: {len(active_sites)} / Total: {len(all_sites)}")
 
-    # ── Step 4: AI summary ────────────────────────────────────────────────
+    # summary
     summary = ""
     sites_for_ai = active_sites[:20] if active_sites else all_sites[:20]
     if sites_for_ai and llm:

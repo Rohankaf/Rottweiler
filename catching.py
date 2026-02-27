@@ -17,12 +17,9 @@ from typing import List, Dict
 
 warnings.filterwarnings("ignore")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# CONFIG
-# ══════════════════════════════════════════════════════════════════════════════
 
-MAX_CONTENT_CHARS = 2500   # max chars of text kept per page
-SCRAPE_TIMEOUT    = 45     # seconds — Tor is slow, be patient
+MAX_CONTENT_CHARS = 2500   # max chars 
+SCRAPE_TIMEOUT    = 45     # seconds 
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
@@ -31,11 +28,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:137.0) Gecko/20100101 Firefox/137.0",
 ]
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TOR SESSION
-# ══════════════════════════════════════════════════════════════════════════════
 
 def get_tor_session() -> requests.Session:
     """
@@ -58,10 +50,6 @@ def get_tor_session() -> requests.Session:
     }
     return session
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# SINGLE PAGE SCRAPER
-# ══════════════════════════════════════════════════════════════════════════════
 
 def scrape_single(url_data: Dict) -> tuple:
     """
@@ -87,7 +75,7 @@ def scrape_single(url_data: Dict) -> tuple:
         if code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
 
-            # Get page title from HTML if available — strip all tags
+            # Get page title from HTML if available - strip all tags
             title_tag = soup.find("title")
             if title_tag and title_tag.get_text(strip=True):
                 raw_title = title_tag.get_text(strip=True)
@@ -103,7 +91,7 @@ def scrape_single(url_data: Dict) -> tuple:
 
             # Extract and clean body text
             text = soup.get_text(separator=" ")
-            text = " ".join(text.split())  # collapse whitespace
+            text = " ".join(text.split())  
 
             if len(text) > MAX_CONTENT_CHARS:
                 text = text[:MAX_CONTENT_CHARS] + "...[truncated]"
@@ -133,9 +121,6 @@ def scrape_single(url_data: Dict) -> tuple:
         return url, {"title": title, "content": f"[Error: {str(e)[:80]}]", "status": "error", "status_code": None}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# BATCH SCRAPER
-# ══════════════════════════════════════════════════════════════════════════════
 
 def scrape_multiple(
     urls_data: List[Dict],
@@ -167,10 +152,6 @@ def scrape_multiple(
 
     return results
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CONVENIENCE: scrape a plain list of URL strings
-# ══════════════════════════════════════════════════════════════════════════════
 
 def scrape_urls(urls: List[str], max_workers: int = 5) -> Dict[str, Dict]:
     """
