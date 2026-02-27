@@ -87,6 +87,7 @@ graph TD
 ---
 
 ## Installation
+### LLM Configuration
 ROTTWEILER supports multiple LLM providers.
 You only need to configure the API keys for the providers you intend to use.
 
