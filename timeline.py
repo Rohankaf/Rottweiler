@@ -1,13 +1,3 @@
-"""
-timeline.py — Renders the inline uptime bar for each .onion link.
-
-FIX: Removed dependency on deleted `db` module.
-     Now works directly with site dicts from session state.
-
-Usage in app.py:
-    from timeline import uptime_bar_html
-    st.markdown(uptime_bar_html(site), unsafe_allow_html=True)
-"""
 
 from datetime import datetime, timedelta
 from typing import Dict, List
