@@ -107,4 +107,5 @@ yarn-error.log*
 *.tmp
 *.temp
 *.orig
-logo.pngmonitor.json
+logo.png
+monitor.json
