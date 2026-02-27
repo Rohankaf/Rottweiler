@@ -1,6 +1,9 @@
-<div align="center">
 
-![ROTTWEILER](images/logo.png)
+<div align="center">
+  <img src="images/logo.png" width="220">
+  <h1>ROTTWEILER</h1>
+  <p><b>Dark Web Intelligence Engine</b></p>
+</div>
 
 # ROTTWEILER
 
