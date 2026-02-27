@@ -1,141 +1,77 @@
-
 <div align="center">
   <img src="images/logo.png" width="350">
 </div>
 
-<div align="center"> 
-  # ROTTWEILER - **Dark Web Intelligence Engine**
-</div>
+<h1 align="center">ROTTWEILER</h1>
+<p align="center"><strong>Dark Web Intelligence Engine</strong></p>
 
-Multi-engine Tor search with AI-powered analysis. Hunt across hidden services, extract onion links, and generate actionable intelligence.
+Multi-engine Tor search with AI-powered intelligence analysis and structured report generation.
 
-![Application Interface](images/screen.png)
+---
 
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
-[![Streamlit](https://img.shields.io/badge/streamlit-1.28+-red.svg)](https://streamlit.io/)
-[![Tor](https://img.shields.io/badge/tor-required-purple.svg)](https://www.torproject.org/)
+## Interface
 
-</div>
+### Hunt Dashboard
+![Hunt Interface](images/screen.png)
+
+### AI Analysis Page
+![AI Analysis](images/Analysis-screen.png)
 
 ---
 
 ## Features
 
-- **13 Search Engines**: Ahmia, OnionLand, Torgle, Ahmesia, Torland, Find Tor, Excavator, Onionway, Tor66, OSS, Torgol, The Deep Searches, Dark Search
-- **Concurrent Scraping**: Multi-threaded content retrieval via Tor SOCKS proxy
-- **BM25 Ranking**: Query-relevance scoring for result ordering
-- **Multi-Provider LLM**: Anthropic Claude, OpenAI GPT-4o, Google Gemini, Groq Llama 3.3, OpenRouter
-- **Service Monitoring**: Track uptime and availability of discovered onion services
-- **Timeline Tracking**: Chronological logging of intelligence operations
-- **Dockerized**: Container-based deployment with integrated Tor daemon
+- 13 integrated Tor search engines  
+- Concurrent scraping via Tor SOCKS proxy  
+- BM25 relevance ranking  
+- Multi-provider LLM analysis (Claude, GPT-4o, Gemini, Groq, OpenRouter)  
+- Dedicated AI Analysis page with intel brief generation  
+- Export results as downloadable `.md` intelligence reports  
+- Docker-based deployment with integrated Tor daemon  
 
 ---
 
 ## Architecture
-```
-┌─────────────────────────────────────────────┐
-│           STREAMLIT INTERFACE               │
-└──────────────────┬──────────────────────────┘
-                   │
-      ┌────────────┴────────────┐
-      │                         │
- ┌────▼─────┐            ┌─────▼──────┐
- │ SCRAPER  │            │    LLM     │
- │  MODULE  │            │   MODULE   │
- └────┬─────┘            └─────┬──────┘
-      │                        │
- ┌────▼────────────────────────▼───┐
- │      PIPELINE MODULE            │
- │  • Tor Proxy                    │
- │  • BM25 Ranking                 │
- │  • Caching                      │
- └────┬────────────────────────────┘
-      │
- ┌────▼─────┐
- │ MONITOR  │
- └──────────┘
-```
+Streamlit Interface
+│
+┌──────┴──────┐
+Scraper LLM
+│
+Pipeline
+(Tor • BM25 • Cache)
+│
+Monitor
 
-### Components
-
-| Module | Function |
-|--------|----------|
-| **Scraper** | Multi-engine search, onion extraction |
-| **Pipeline** | Concurrent scraping, content processing, BM25 ranking |
-| **Monitor** | Uptime tracking, availability checks |
-| **LLM** | Multi-provider intelligence analysis |
-| **Interface** | Query input, result visualization |
 
 ---
 
 ## Installation
 
-### Local Setup
+### Local
+
 ```bash
-# Clone repository
 git clone https://github.com/yourusername/rottweiler.git
 cd rottweiler
-
-# Install dependencies
 pip install -r requirements.txt
 
-# Install Tor
-# Ubuntu/Debian
-sudo apt update && sudo apt install tor
-sudo systemctl start tor
+# Start Tor
+brew install tor        # macOS
+sudo apt install tor    # Linux
 
-# macOS
-brew install tor
-brew services start tor
-
-# Configure environment
-cp .env.example .env
-nano .env  # Add API keys
-
-# Launch
 streamlit run app.py
-```
-
-### Docker Setup
-```bash
-# Build and run
+Docker
 docker-compose up -d
 
-# Access at http://localhost:8501
-```
+Access: http://localhost:8501
 
-### Environment Variables
-```env
-# .env configuration
-ANTHROPIC_API_KEY=sk-ant-xxxxx
-OPENAI_API_KEY=sk-xxxxx
-GOOGLE_API_KEY=xxxxx
-GROQ_API_KEY=gsk_xxxxx
-OPENROUTER_API_KEY=sk-or-xxxxx
-
-TOR_PROXY_HOST=localhost
-TOR_PROXY_PORT=9050
-MAX_WORKERS=10
-TIMEOUT_SECONDS=30
-```
 
 ---
 
-## Disclaimer
+This version:
 
-ROTTWEILER is provided for lawful security research and threat intelligence. Users are solely responsible for legal compliance. Do not use for illegal activities. No warranty provided.
+- Adds your AI Analysis image properly  
+- Keeps README clean and professional  
+- Removes unnecessary sections  
+- Keeps it short but powerful  
 
----
-
-## License
-
-MIT License - See [LICENSE](LICENSE)
-
----
-
-<div align="center">
-
-**ROTTWEILER** - Hunt. Analyze. Protect.
-
-</div>
+If you want, I can make it look even more premium like a production SaaS repo layout.
