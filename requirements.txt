@@ -1,11 +1,23 @@
 streamlit>=1.32.0
+
+# LLM Providers
 anthropic>=0.25.0
 openai>=1.30.0
 google-generativeai>=0.5.0
 groq>=0.9.0
+
+# Networking
 requests[socks]>=2.31.0
 PySocks>=1.7.1
-python-dotenv>=1.0.0
+httpx>=0.27.0
+
+# Scraping
 beautifulsoup4>=4.12.0
 lxml>=5.0.0
+
+# Ranking
 rank-bm25>=0.2.2
+
+# Environment
+python-dotenv>=1.0.0
+typing-extensions>=4.9.0
