@@ -1,11 +1,11 @@
 
 <div align="center">
-  <img src="images/logo.png" width="300">
+  <img src="images/logo.png" width="350">
 </div>
 
-# ROTTWEILER
-
-**Dark Web Intelligence Engine**
+<div align="center"> 
+  # ROTTWEILER - **Dark Web Intelligence Engine**
+</div>
 
 Multi-engine Tor search with AI-powered analysis. Hunt across hidden services, extract onion links, and generate actionable intelligence.
 
