@@ -1,4 +1,3 @@
-
 import streamlit as st
 import time
 import base64
@@ -36,7 +35,6 @@ if "discovered_sites"  not in st.session_state: st.session_state.discovered_site
 if "offline_sites"     not in st.session_state: st.session_state.offline_sites     = []
 if "hunt_result"       not in st.session_state: st.session_state.hunt_result       = None
 if "claude_ai"         not in st.session_state: st.session_state.claude_ai         = ClaudeAI()
-
 if "selected_model"    not in st.session_state: st.session_state.selected_model    = "Claude Sonnet 4 (Anthropic)"
 if "intel_brief"       not in st.session_state: st.session_state.intel_brief       = None
 if "smart_online_only" not in st.session_state: st.session_state.smart_online_only = False
@@ -107,7 +105,6 @@ with tab1:
             raw_results  = []
             done_count   = 0
 
-            
             with ThreadPoolExecutor(max_workers=10) as executor:
                 future_map = {
                     executor.submit(fetch_search_results, eng, search_query): eng
@@ -144,13 +141,12 @@ with tab1:
                     term.markdown(ui.render_terminal(log_lines, "[ 1 / 3 ]  SEARCHING ENGINES"), unsafe_allow_html=True)
                     prog.progress(pct)
 
-            # PHASE 2: BM25 Ranking
             log_lines.append("")
             log_lines.append(f'<span style="color:#5a5e6a;">RANKING {len(raw_results)} results with BM25...</span>')
             term.markdown(ui.render_terminal(log_lines, "[ 2 / 3 ]  RANKING & SMART SCRAPING"), unsafe_allow_html=True)
             prog.progress(30)
 
-            # Get ranked results
+            # Get ranked unique results
             ranked_results = get_search_results(search_query, max_workers=10)
             
             log_lines.append(
@@ -159,7 +155,6 @@ with tab1:
             term.markdown(ui.render_terminal(log_lines, "[ 2 / 3 ]  RANKING & SMART SCRAPING"), unsafe_allow_html=True)
             prog.progress(35)
 
-            
             log_lines.append("")
             log_lines.append(
                 f'<span style="color:#5a5e6a;">SMART SCRAPING: Stopping at {max_results} ONLINE sites...</span>'
@@ -172,14 +167,12 @@ with tab1:
             scraped_count = 0
             checked_count = 0
             
-            
             scrape_limit = min(len(ranked_results), max_results * 3)
-            
             
             batch_size = 10
             
             for batch_start in range(0, scrape_limit, batch_size):
-                
+                # Check if we already have enough online sites
                 if len(active_sites) >= max_results:
                     log_lines.append(
                         f'<span style="color:#00c97a;">✓ TARGET REACHED: {len(active_sites)} online sites found</span>'
@@ -189,7 +182,7 @@ with tab1:
                 batch_end = min(batch_start + batch_size, scrape_limit)
                 batch = ranked_results[batch_start:batch_end]
                 
-                
+                # Scrape this batch
                 with ThreadPoolExecutor(max_workers=5) as executor:
                     future_map = {
                         executor.submit(scrape_single, item): item
@@ -257,7 +250,7 @@ with tab1:
                         )
                         prog.progress(pct)
             
-            
+            # Final scraping summary
             log_lines.append("")
             log_lines.append(
                 f'<span style="color:#00c97a;">SCRAPING COMPLETE — '
@@ -266,7 +259,7 @@ with tab1:
             term.markdown(ui.render_terminal(log_lines, "[ 2 / 3 ]  SMART SCRAPING"), unsafe_allow_html=True)
             prog.progress(78)
 
-            
+            # PHASE 3: AI Analysis
             log_lines.append("")
             log_lines.append('<span style="color:#5a5e6a;">GENERATING AI INTEL BRIEF...</span>')
             term.markdown(ui.render_terminal(log_lines, "[ 3 / 3 ]  AI ANALYSIS"), unsafe_allow_html=True)
@@ -287,7 +280,7 @@ with tab1:
             term.markdown(ui.render_terminal(log_lines, "[ 3 / 3 ]  AI ANALYSIS"), unsafe_allow_html=True)
             prog.progress(100)
             
-            
+            # Trim to exact count requested
             active_sites = active_sites[:max_results]
             
             st.session_state.discovered_sites = active_sites
@@ -354,7 +347,7 @@ with tab2:
         generate_brief, custom_prompt, run_analysis = ui.render_analysis_tab_content(sites)
         
         if generate_brief:
-            with st.spinner("Analyzing with Claude..."):
+            with st.spinner("Analyzing with AI..."):
                 last_query = sites[0].get("query", "dark web") if sites else "dark web"
                 site_data  = [
                     {
@@ -372,7 +365,7 @@ with tab2:
                 st.download_button(
                     label="Download Intelligence Report (.md)",
                     data=brief,
-                    file_name=f"rottweiler_{last_query}.md",
+                    file_name=f"rottweiler_{last_query}_analysis.md",
                     mime="text/markdown"
                 )
 
@@ -395,7 +388,7 @@ with tab2:
                     st.download_button(
                         label="Download Analysis Report (.md)",
                         data=result_text,
-                        file_name=f"rottweiler_{custom_prompt[:30]}.md",
+                        file_name=f"rottweiler_custom_analysis.md",
                         mime="text/markdown"
                     )
             else:
