@@ -1,52 +1,33 @@
-
-
-# Environment & secrets 
+# Environment & secrets
 .env
 .env.*
 *.env
 secrets.toml
 .streamlit/secrets.toml
 
-# Python 
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.pyc
-*.pdb
 *.egg
 *.egg-info/
 dist/
 build/
-eggs/
-parts/
-var/
-sdist/
-develop-eggs/
-.installed.cfg
-lib/
-lib64/
-MANIFEST
 
-# Virtual environments 
+# Virtual environments
 .venv/
 venv/
 env/
-ENV/
-.env/
-.venv.bak/
 
-# Streamlit 
+# Streamlit
 .streamlit/
 
-# Tor / proxy 
+# Tor / proxy
 tor_data/
 *.tor
 torrc.local
 
-#  Logs & output dumps 
+# Logs & outputs
 *.log
-*.log.*
 logs/
 output/
 results/
@@ -54,58 +35,33 @@ exports/
 dumps/
 *.json.bak
 
-#  Database / cache 
+# Database / cache
 *.db
-*.sqlite
-*.sqlite3
-*.db-journal
-*.db-wal
-*.db-shm
+*.sqlite*
 cache/
 .cache/
 
-# OS junk 
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
 Thumbs.db
-ehthumbs.db
-Desktop.ini
 
-# IDE / editor 
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-.project
-.classpath
-.settings/
 
-# Jupyter 
+# Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
-# Testing 
+# Testing
 .pytest_cache/
 .coverage
 htmlcov/
-.tox/
-nosetests.xml
-coverage.xml
 
-# Node (if any frontend tooling) 
+# Node
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Misc 
-*.bak
-*.tmp
-*.temp
-*.orig
-logo.png
+# Docker
+*.tar
+
+# Runtime generated
 monitor.json
