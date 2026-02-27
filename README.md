@@ -50,43 +50,54 @@ Multi-engine Tor search with AI-powered intelligence analysis and structured rep
 ---
 
 ## Architecture
-
 ```mermaid
 graph TD
+    User[User Browser] --> Streamlit[Streamlit Frontend]
+    Streamlit --> Pipeline[Pipeline Controller]
+    Pipeline --> SearchEngine[Search Engine Module]
+    Pipeline --> Scraper[Scraper Module]
+    Pipeline --> Monitor[Monitoring System]
+    Pipeline --> Timeline[Timeline Tracker]
+    
+    SearchEngine --> TorProxy[Tor Proxy SOCKS5]
+    Scraper --> TorProxy
+    TorProxy --> OnionSites[Dark Web Onion Sites]
+    
+    Scraper --> BM25[BM25 Ranking Engine]
+    BM25 --> LLM[Multi-Provider LLM Engine]
+    
+    LLM --> Claude[Anthropic Claude]
+    LLM --> OpenAI[OpenAI GPT-4o]
+    LLM --> Gemini[Google Gemini]
+    LLM --> Groq[Groq Llama 3.3]
+    LLM --> OpenRouter[OpenRouter]
+    
+    style Streamlit fill:#4a5568,stroke:#cbd5e0
+    style Pipeline fill:#4a5568,stroke:#cbd5e0
+    style BM25 fill:#4a5568,stroke:#cbd5e0
+    style LLM fill:#742a2a,stroke:#fc8181
+    style Claude fill:#742a2a,stroke:#fc8181
+    style OpenAI fill:#742a2a,stroke:#fc8181
+    style Gemini fill:#742a2a,stroke:#fc8181
+    style Groq fill:#742a2a,stroke:#fc8181
+    style OpenRouter fill:#742a2a,stroke:#fc8181
+    style TorProxy fill:#4a5568,stroke:#cbd5e0
+```
 
-User --> Streamlit
-Streamlit --> Pipeline
+---
 
-Pipeline --> SearchEngine
-Pipeline --> Scraper
-Pipeline --> Monitor
-Pipeline --> Timeline
+## Installation
 
-SearchEngine --> TorProxy
-Scraper --> TorProxy
-TorProxy --> OnionSites
+### Prerequisites
 
-Scraper --> BM25
-BM25 --> LLM
+- Python 3.9+
+- Tor daemon
+- Docker (optional)
 
-LLM --> Claude
-LLM --> OpenAI
-LLM --> Gemini
-LLM --> Groq
-LLM --> OpenRouter
-Installation
-Prerequisites
-
-Python 3.9+
-
-Tor daemon
-
-Docker (optional)
-
-Local Setup
+### Local Setup
+```bash
 git clone https://github.com/yourusername/rottweiler.git
 cd rottweiler
-
 pip install -r requirements.txt
 
 # macOS
@@ -101,17 +112,21 @@ cp .env.example .env
 # Add your API keys inside .env
 
 streamlit run app.py
+```
 
-Access: http://localhost:8501
+Access: `http://localhost:8501`
 
-Docker Setup
+### Docker Setup
+```bash
 docker-compose up -d
 docker-compose logs -f
 docker-compose down
+```
 
-Access: http://localhost:8501
+Access: `http://localhost:8501`
 
-Environment Configuration
+### Environment Configuration
+```env
 ANTHROPIC_API_KEY=
 OPENAI_API_KEY=
 GOOGLE_API_KEY=
@@ -122,8 +137,18 @@ TOR_PROXY_HOST=localhost
 TOR_PROXY_PORT=9050
 MAX_WORKERS=10
 TIMEOUT_SECONDS=30
-Legal Notice
+```
+
+---
+
+## Legal Notice
 
 ROTTWEILER is provided for lawful security research and threat intelligence. Users are responsible for compliance with applicable laws.
 
-<div align="center"> ROTTWEILER — Hunt. Analyze. Protect. </div> ```
+---
+
+<div align="center">
+
+**ROTTWEILER** — Hunt. Analyze. Protect.
+
+</div>
