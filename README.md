@@ -96,7 +96,7 @@ graph TD
 
 ### Local Setup
 ```bash
-git clone https://github.com/yourusername/rottweiler.git
+git clone https://github.com/Rohankaf/rottweiler.git
 cd rottweiler
 pip install -r requirements.txt
 
