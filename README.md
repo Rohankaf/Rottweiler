@@ -1,6 +1,6 @@
 <div align="center">
 
-![ROTTWEILER](logo.png)
+![ROTTWEILER](images/logo.png)
 
 # ROTTWEILER
 
@@ -8,7 +8,7 @@
 
 Multi-engine Tor search with AI-powered analysis. Hunt across hidden services, extract onion links, and generate actionable intelligence.
 
-![Application Interface](screen.png)
+![Application Interface](images/screen.png)
 
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
