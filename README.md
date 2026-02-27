@@ -2,7 +2,9 @@
 
 <img src="images/logo.png" alt="ROTTWEILER" width="300"/>
 
-# ROTTWEILER - **Dark Web Intelligence Engine**
+# **ROTTWEILER**
+
+**Dark Web Intelligence Engine**
 
 Multi-engine Tor search with AI-powered intelligence analysis and structured report generation.
 
@@ -13,11 +15,6 @@ Multi-engine Tor search with AI-powered intelligence analysis and structured rep
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 </div>
----
-
-## Overview
-
-ROTTWEILER is a production-grade OSINT platform for systematic Tor network reconnaissance and threat intelligence analysis. Built for security researchers, threat analysts, and intelligence professionals.
 
 ---
 
@@ -27,6 +24,11 @@ ROTTWEILER is a production-grade OSINT platform for systematic Tor network recon
 <img src="images/screen.png" alt="Hunt Interface" width="100%"/>
 
 *Real-time search execution with multi-engine queries, concurrent scraping, and source status tracking*
+
+### AI Analysis Page
+<img src="images/Analysis-screen.png" alt="AI Analysis" width="100%"/>
+
+*LLM-powered intelligence brief generation with exportable markdown reports*
 
 ---
 
@@ -58,94 +60,101 @@ ROTTWEILER is a production-grade OSINT platform for systematic Tor network recon
 
 ## Architecture
 
-### System Design
+<div align="center">
+```mermaid
+graph TB
+    subgraph Layer1["Layer 1: User Interface"]
+        User["👤 User<br/>(Browser)"]
+        Streamlit["Streamlit Frontend<br/>(app.py, ui.uy)"]
+        Pipeline1["Pipeline"]
+        Search1["Search"]
+        Tor1["Tor"]
+        Onion1["Onion Sites"]
+    end
+
+    subgraph Layer2["Layer 2: Core Application Layer"]
+        PipelineCtrl["Pipeline Controller<br/>(pipeline.py)"]
+        SearchEngine["Search Engine Module<br/>(tor_search.py)"]
+        Scraper["Scraper Module<br/>(scraper.py)"]
+        Monitor["Monitoring System<br/>(monitor.py)"]
+        Timeline["Timeline Tracker<br/>(timeline.py)"]
+    end
+
+    subgraph Layer3["Layer 3: Intelligence Layer"]
+        BM25["BM25 Ranking<br/>Engine"]
+        LLM["Multi-Provider LLM Engine<br/>(llm_prompt.py)"]
+        Claude["Anthropic<br/>(Claude)"]
+        OpenAI["OpenAI<br/>(GPT-4o)"]
+        Gemini["Google<br/>Gemini"]
+        Groq["Groq<br/>(Llama 3.3)"]
+        OpenRouter["OpenRouter"]
+    end
+
+    subgraph Layer4["Layer 4: Network Layer"]
+        TorProxy["🧅 Tor Proxy<br/>(SOCKS5 127.0.0.1:9050)"]
+        DarkWeb["Dark Web<br/>(.onion sites)"]
+    end
+
+    subgraph Layer5["Layer 5: Infrastructure Layer"]
+        Docker["🐳 Docker Container"]
+        EnvVars["Environment Variables<br/>(.env)"]
+    end
+
+    User --> Streamlit
+    Streamlit --> Pipeline1
+    Pipeline1 --> Search1
+    Search1 --> Tor1
+    Tor1 --> Onion1
+
+    Streamlit --> PipelineCtrl
+    PipelineCtrl --> SearchEngine
+    PipelineCtrl --> Scraper
+    PipelineCtrl --> Monitor
+    PipelineCtrl --> Timeline
+
+    Scraper --> BM25
+    BM25 --> LLM
+    LLM --> Claude
+    LLM --> OpenAI
+    LLM --> Gemini
+    LLM --> Groq
+    LLM --> OpenRouter
+
+    SearchEngine --> TorProxy
+    Scraper --> TorProxy
+    TorProxy --> DarkWeb
+
+    PipelineCtrl -.-> Docker
+    Docker -.-> EnvVars
+
+    style Layer1 fill:#2d3748,stroke:#4a5568,stroke-width:2px
+    style Layer2 fill:#2d3748,stroke:#4a5568,stroke-width:2px
+    style Layer3 fill:#2d3748,stroke:#4a5568,stroke-width:2px
+    style Layer4 fill:#2d3748,stroke:#4a5568,stroke-width:2px
+    style Layer5 fill:#2d3748,stroke:#4a5568,stroke-width:2px
+    
+    style User fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style Streamlit fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style PipelineCtrl fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style BM25 fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style LLM fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style Claude fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style OpenAI fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style Gemini fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style Groq fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style OpenRouter fill:#742a2a,stroke:#fc8181,stroke-width:2px
+    style TorProxy fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style DarkWeb fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
+    style Docker fill:#4a5568,stroke:#cbd5e0,stroke-width:2px
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Layer 1: User Interface                 │
-│                                                                 │
-│  ┌──────────┐  ┌───────────────┐  ┌──────────┐  ┌────────┐   │
-│  │  User    │→ │   Streamlit   │→ │ Pipeline │→ │ Search │→  │
-│  │(Browser) │  │Frontend       │  │          │  │        │   │
-│  └──────────┘  │(app.py, ui.uy)│  └──────────┘  └────────┘   │
-│                └───────────────┘                               │
-│                                              ↓                  │
-│                                         ┌────────┐  ┌──────────┐│
-│                                         │  Tor   │→ │  Onion   ││
-│                                         │        │  │  Sites   ││
-│                                         └────────┘  └──────────┘│
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                   Layer 2: Core Application Layer               │
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  Pipeline    │  │Search Engine │  │   Scraper    │         │
-│  │  Controller  │  │   Module     │  │   Module     │         │
-│  │(pipeline.py) │  │(tor_search.py)│  │ (scraper.py) │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐                           │
-│  │  Monitoring  │  │   Timeline   │                           │
-│  │   System     │  │   Tracker    │                           │
-│  │(monitor.py)  │  │(timeline.py) │                           │
-│  └──────────────┘  └──────────────┘                           │
-│                                                                 │
-│         Monitoring → Scraper → Status Tracking                 │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                    Layer 3: Intelligence Layer                  │
-│                                                                 │
-│  Scraper → BM25 → LLM → Intelligence Report → UI               │
-│                                                                 │
-│  ┌──────────────┐          ┌──────────────────────┐           │
-│  │     BM25     │          │ Multi-Provider LLM   │           │
-│  │   Ranking    │          │      Engine          │           │
-│  │   Engine     │          │  (llm_prompt.py)     │           │
-│  └──────────────┘          └──────────────────────┘           │
-│                                      ↓                         │
-│                            ┌──────────────────┐               │
-│                            │  Anthropic       │               │
-│                            │  (Claude)        │               │
-│                            ├──────────────────┤               │
-│                            │  OpenAI          │               │
-│                            │  (GPT-4o)        │               │
-│                            ├──────────────────┤               │
-│                            │  Google Gemini   │               │
-│                            ├──────────────────┤               │
-│                            │  Groq            │               │
-│                            │  (Llama 3.3)     │               │
-│                            ├──────────────────┤               │
-│                            │  OpenRouter      │               │
-│                            └──────────────────┘               │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                       Layer 4: Network Layer                    │
-│                                                                 │
-│  ┌──────────────────────┐          ┌──────────────────────┐   │
-│  │     Tor Proxy        │    →     │      Dark Web        │   │
-│  │(SOCKS5 127.0.0.1:9050)│          │    (.onion sites)    │   │
-│  └──────────────────────┘          └──────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                   Layer 5: Infrastructure Layer                 │
-│                                                                 │
-│  ┌──────────────────────┐          ┌──────────────────────┐   │
-│  │   Docker Container   │          │    Environment       │   │
-│  │                      │          │     Variables        │   │
-│  │                      │          │      (.env)          │   │
-│  └──────────────────────┘          └──────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
+
+</div>
 
 ### Component Responsibilities
 
 | Layer | Component | Function |
 |-------|-----------|----------|
 | **Layer 1** | User Interface | Browser-based Streamlit frontend for query input and result visualization |
-| | | Routes requests through Pipeline → Search → Tor → Onion Sites |
 | **Layer 2** | Core Application | Pipeline Controller orchestrates search and scraping operations |
 | | | Search Engine Module queries 13 Tor search engines |
 | | | Scraper Module performs concurrent content retrieval |
@@ -153,7 +162,6 @@ ROTTWEILER is a production-grade OSINT platform for systematic Tor network recon
 | | | Timeline Tracker maintains chronological operation logs |
 | **Layer 3** | Intelligence | BM25 Ranking Engine scores results by query relevance |
 | | | Multi-Provider LLM Engine generates intelligence reports |
-| | | Supports Anthropic, OpenAI, Google, Groq, OpenRouter |
 | **Layer 4** | Network | Tor Proxy routes all requests through SOCKS5 (127.0.0.1:9050) |
 | | | Provides anonymous access to dark web .onion sites |
 | **Layer 5** | Infrastructure | Docker Container encapsulates application and Tor daemon |
