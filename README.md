@@ -8,7 +8,7 @@
 
 Multi-engine Tor search with AI-powered analysis. Hunt across hidden services, extract onion links, and generate actionable intelligence.
 
-![Application Interface](1772214799371_image.png)
+![Application Interface](screen.png)
 
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
