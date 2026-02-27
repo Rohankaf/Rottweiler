@@ -143,12 +143,17 @@ TIMEOUT_SECONDS=30
 
 ## Legal Notice
 
-ROTTWEILER is provided for lawful security research and threat intelligence. Users are responsible for compliance with applicable laws.
+ROTTWEILER is intended solely for lawful security research, threat intelligence, and educational purposes. Users are responsible for ensuring compliance with all applicable local, national, and international laws and regulations.
+
+Unauthorized access to systems, misuse of collected information, or engagement in illegal activities is strictly prohibited. The authors and contributors assume no liability for misuse, damage, or legal consequences arising from the use of this software.
+
+By using this tool, you agree to use it ethically and in accordance with applicable laws.
 
 ---
 
 <div align="center">
 
-**ROTTWEILER** — Hunt. Analyze. Protect.
+ROTTWEILER  
+Hunt. Analyze. Protect.
 
 </div>
