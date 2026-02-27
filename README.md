@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/logo.png" alt="ROTTWEILER" width="200"/>
+<img src="images/logo.png" alt="ROTTWEILER" width="280"/>
 
 # ROTTWEILER - **Dark Web Intelligence Engine**
 
