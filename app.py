@@ -24,7 +24,7 @@ st.set_page_config(
 )
 
 LOGO_B64 = ""
-logo_path = os.path.join(os.path.dirname(__file__), "logo.png")
+logo_path = os.path.join(os.path.dirname(__file__), "images/logo.png")
 if os.path.exists(logo_path):
     with open(logo_path, "rb") as f:
         LOGO_B64 = base64.b64encode(f.read()).decode()
