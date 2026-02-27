@@ -13,11 +13,13 @@ Multi-engine Tor search with AI-powered intelligence analysis and structured rep
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 </div>
-
+---
 
 ## Overview
 
 ROTTWEILER is a production-grade OSINT platform for systematic Tor network reconnaissance and threat intelligence analysis. Built for security researchers, threat analysts, and intelligence professionals.
+
+---
 
 ## Interface
 
