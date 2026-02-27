@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/logo.png" alt="ROTTWEILER" width="220"/>
+<img src="images/logo.png" alt="ROTTWEILER" width="300"/>
 
 # ROTTWEILER
 
