@@ -1,9 +1,3 @@
-# scraper.py
-# Copyright 2026 rohahahan
-# Licensed under Apache 2.0
-#
-# Fetches and extracts readable text from discovered .onion sites.
-# Used after tor_search.py finds links, to enrich results with actual content.
 
 import re
 import random
@@ -30,9 +24,6 @@ USER_AGENTS = [
 ]
 
 def get_tor_session() -> requests.Session:
-    """
-    Requests session routed through Tor SOCKS5 with auto-retry on server errors.
-    """
     session = requests.Session()
     retry = Retry(
         total=2,
@@ -52,16 +43,6 @@ def get_tor_session() -> requests.Session:
 
 
 def scrape_single(url_data: Dict) -> tuple:
-    """
-    Scrape one URL. Accepts a dict with at least {"link": str, "title": str}.
-
-    Returns:
-        (url: str, enriched_data: dict) where enriched_data has:
-            - title       : page <title> tag or original title
-            - content     : cleaned body text (truncated)
-            - status      : "online" | "offline" | "error"
-            - status_code : int or None
-    """
     url   = url_data.get("link", "")
     title = url_data.get("title", url)
 
@@ -75,21 +56,18 @@ def scrape_single(url_data: Dict) -> tuple:
         if code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
 
-            # Get page title from HTML if available - strip all tags
             title_tag = soup.find("title")
             if title_tag and title_tag.get_text(strip=True):
                 raw_title = title_tag.get_text(strip=True)
-                # Remove any residual HTML entities or tags
                 raw_title = re.sub(r"<[^>]+>", "", raw_title)
                 raw_title = raw_title.replace("&lt;", "").replace("&gt;", "").replace("&amp;", "&")
                 title = raw_title.strip() or title
 
-            # Remove noise elements
             for tag in soup(["script", "style", "nav", "footer", "header",
                               "noscript", "iframe", "form", "button"]):
                 tag.decompose()
 
-            # Extract and clean body text
+           
             text = soup.get_text(separator=" ")
             text = " ".join(text.split())  
 
@@ -126,16 +104,6 @@ def scrape_multiple(
     urls_data: List[Dict],
     max_workers: int = 5,
 ) -> Dict[str, Dict]:
-    """
-    Scrape multiple URLs concurrently.
-
-    Args:
-        urls_data   : list of dicts with {"link": str, "title": str}
-        max_workers : thread pool size (keep low — Tor has limited bandwidth)
-
-    Returns:
-        dict mapping url → enriched_data dict
-    """
     results: Dict[str, Dict] = {}
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -154,8 +122,5 @@ def scrape_multiple(
 
 
 def scrape_urls(urls: List[str], max_workers: int = 5) -> Dict[str, Dict]:
-    """
-    Wrapper for scrape_multiple when you only have URL strings (no titles).
-    """
     urls_data = [{"link": u, "title": u} for u in urls]
     return scrape_multiple(urls_data, max_workers=max_workers)
