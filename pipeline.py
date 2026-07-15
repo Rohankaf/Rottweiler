@@ -5,23 +5,6 @@ from datetime import datetime
 
 
 def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
-    """
-    Complete discovery pipeline - returns ONLINE sites only.
-
-    Args:
-        query       : search query string
-        monitor     : SiteMonitor instance (kept for API compat, not used)
-        llm         : ClaudeAI instance
-        max_results : number of sites to search and scrape
-
-    Returns dict:
-        discovered    : int  — total unique links found by search engines
-        active        : int  — sites that returned HTTP 200
-        all_sites     : list of all enriched site dicts
-        active_sites  : list of online-only site dicts
-        summary       : str  — AI intelligence brief
-    """
-    #  Step 1:search 
     print(f"\n[PIPELINE] Searching for: {query}")
     search_results = get_search_results(query, max_workers=10)
     search_results = search_results[:max_results]
@@ -36,11 +19,9 @@ def run_discovery(query: str, monitor, llm, max_results: int = 50) -> dict:
             "summary":     "No results found. Try a different query or check Tor connection.",
         }
 
-    # Step 2:Scrape each result
     print(f"[PIPELINE] Scraping {len(search_results)} sites via Tor...")
     scraped = scrape_multiple(search_results, max_workers=5)
 
-    # Build site records
     ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     all_sites: list  = []
     active_sites: list = []
