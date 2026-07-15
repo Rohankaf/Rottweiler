@@ -17,7 +17,6 @@ TOOLTIP_LABEL = {
 
 
 def _slot_label(slot_index: int, total_slots: int, days: int) -> str:
-    """Human-readable label for a slot (e.g. 'Jun 12 18:00')."""
     now   = datetime.utcnow()
     start = now - timedelta(days=days)
     slot_duration = timedelta(days=days) / total_slots
@@ -26,27 +25,12 @@ def _slot_label(slot_index: int, total_slots: int, days: int) -> str:
 
 
 def _generate_slots_from_site(site: Dict, slots: int = 30) -> List[str]:
-    """
-    Generate timeline slot data from a site dict (no DB needed).
-    Since we only have current status (no history), we fill the bar
-    based on what we know: current status fills the last slot,
-    the rest are 'unknown' (no historical data available).
-    """
     status = site.get("status", "unknown")
     slot_data = ["unknown"] * (slots - 1) + [status]
     return slot_data
 
 
 def uptime_bar_html(site: Dict, slots: int = 30, days: int = 7) -> str:
-    """
-    Returns an HTML string with:
-      • The .onion URL
-      • A slot colour bar showing status history (or current status)
-      • Meta: uptime %, discovered at, response time
-
-    Args:
-        site: dict with keys: url, status, response_time, discovered_at, query
-    """
     if not site:
         return ""
 
