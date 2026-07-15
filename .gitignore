@@ -1,33 +1,24 @@
-# Environment & secrets
+
 .env
 .env.*
 *.env
 secrets.toml
 .streamlit/secrets.toml
-
-# Python
 __pycache__/
 *.py[cod]
 *.egg
 *.egg-info/
 dist/
 build/
-
-# Virtual environments
 .venv/
 venv/
 env/
 !.env.example
-
-# Streamlit
 .streamlit/
-
 # Tor / proxy
 tor_data/
 *.tor
 torrc.local
-
-# Logs & outputs
 *.log
 logs/
 output/
@@ -35,34 +26,18 @@ results/
 exports/
 dumps/
 *.json.bak
-
-# Database / cache
 *.db
 *.sqlite*
 cache/
 .cache/
-
-# OS
 .DS_Store
 Thumbs.db
-
-# IDE
 .vscode/
 .idea/
-
-# Jupyter
 .ipynb_checkpoints/
-
-# Testing
 .pytest_cache/
 .coverage
 htmlcov/
-
-# Node
 node_modules/
-
-# Docker
 *.tar
-
-# Runtime generated
 monitor.json
