@@ -259,7 +259,7 @@ with tab1:
             term.markdown(ui.render_terminal(log_lines, "[ 2 / 3 ]  SMART SCRAPING"), unsafe_allow_html=True)
             prog.progress(78)
 
-            # PHASE 3: AI Analysis
+        
             log_lines.append("")
             log_lines.append('<span style="color:#5a5e6a;">GENERATING AI INTEL BRIEF...</span>')
             term.markdown(ui.render_terminal(log_lines, "[ 3 / 3 ]  AI ANALYSIS"), unsafe_allow_html=True)
@@ -280,7 +280,7 @@ with tab1:
             term.markdown(ui.render_terminal(log_lines, "[ 3 / 3 ]  AI ANALYSIS"), unsafe_allow_html=True)
             prog.progress(100)
             
-            # Trim to exact count requested
+        
             active_sites = active_sites[:max_results]
             
             st.session_state.discovered_sites = active_sites
@@ -326,7 +326,6 @@ with tab1:
         
         ui.render_hunt_results(result, sites, offline_sites, uptime_bar_html)
         
-        # Download button for intel brief
         if brief:
             last_query = sites[0].get("query", "hunt") if sites else "hunt"
             st.download_button(
@@ -384,7 +383,7 @@ with tab2:
                     ]
                     result_text = claude_ai.analyze_sites(custom_prompt, site_data)
                     ui.render_custom_analysis_result(result_text)
-                    # Download button for custom analysis
+                
                     st.download_button(
                         label="Download Analysis Report (.md)",
                         data=result_text,
