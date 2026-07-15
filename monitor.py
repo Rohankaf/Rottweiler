@@ -9,14 +9,10 @@ TOR_PROXY = {
     "https": "socks5h://127.0.0.1:9050",
 }
 
-REQUEST_TIMEOUT = 60  # seconds
+REQUEST_TIMEOUT = 60 
 
 
 class SiteMonitor:
-    """
-    Site monitor WITHOUT database dependency.
-    Just checks sites and returns status.
-    """
     def __init__(self):
         self.interval = 900  # 15 min default
         self._log: List[str] = []
@@ -39,10 +35,6 @@ class SiteMonitor:
             return list(self._log)
 
     def check_site(self, url: str) -> dict:
-        """
-        Check a single site. Returns status dict.
-        NO DATABASE - just returns the result.
-        """
         if not url.startswith("http"):
             check_url = f"http://{url}"
         else:
@@ -72,7 +64,7 @@ class SiteMonitor:
             
         except requests.exceptions.ConnectionError as e:
             err_str = str(e)[:60]
-            # Tor might not be running
+            
             if "SOCKS" in err_str or "10061" in err_str or "refused" in err_str.lower():
                 self._log_entry(f"⚠ TOR NOT AVAILABLE — {url[:40]}")
                 return {"status": "unknown", "error": "Tor not available", "response_time": 0}
@@ -84,9 +76,6 @@ class SiteMonitor:
             return {"status": "offline", "response_time": 0}
 
     def check_multiple(self, urls: List[str]) -> List[dict]:
-        """
-        Check multiple sites and return results.
-        """
         results = []
         for url in urls:
             result = self.check_site(url)
