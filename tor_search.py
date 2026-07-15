@@ -15,10 +15,6 @@ from rank_bm25 import BM25Okapi
 warnings.filterwarnings("ignore")
 
 def get_tor_session() -> requests.Session:
-    """
-    Creates a requests Session routed through Tor SOCKS5 proxy,
-    with automatic retries on server errors.
-    """
     session = requests.Session()
 
     retry = Retry(
@@ -107,15 +103,6 @@ def _extract_domain(url: str) -> str:
 
 
 def _is_valid_result(href: str, title: str = "") -> bool:
-    """
-    Accept a link only if ALL of the following are true:
-      1. href contains .onion
-      2. Domain is NOT blacklisted (search engines, known junk)
-      3. The path does NOT look like a search/nav page
-      4. Title (if given) is longer than 3 chars — filters out icon-only links
-      5. Onion address is v2 (16 chars) or v3 (56 chars)
-      6. 'search' keyword NOT in the raw href path  ← from search.py
-    """
     if ".onion" not in href:
         return False
 
@@ -153,14 +140,6 @@ def _normalise(url: str) -> str:
 
 
 def fetch_search_results(engine: Dict, query: str) -> List[Dict[str, str]]:
-    """
-    Query one search engine via Tor.
-    Returns a list of {"title": ..., "link": ...} dicts.
-    Uses the proven approach from search.py:
-      - find all <a> tags
-      - regex-extract .onion hrefs
-      - apply _is_valid_result filter (title length, 'search' exclusion, blacklist)
-    """
     name     = engine["name"]
     endpoint = engine["url"].format(query=urllib.parse.quote_plus(query))
     headers  = get_headers()
@@ -181,7 +160,6 @@ def fetch_search_results(engine: Dict, query: str) -> List[Dict[str, str]]:
                 href  = a["href"]
                 title = a.get_text(strip=True)
 
-                # Extract the .onion URL from the href
                 match = re.findall(r"https?://[a-z2-7A-Z0-9\.\-]+\.onion[^\s\"'<>]*", href)
                 if not match:
                     continue
