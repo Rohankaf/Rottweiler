@@ -130,7 +130,6 @@ def _is_valid_result(href: str, title: str = "") -> bool:
 
 
 def _normalise(url: str) -> str:
-    """Lowercase host, strip query/fragment, remove trailing slash."""
     try:
         p = urllib.parse.urlparse(url)
         path = p.path.rstrip("/") or "/"
@@ -193,11 +192,6 @@ def fetch_search_results(engine: Dict, query: str) -> List[Dict[str, str]]:
         return []
 
 def get_search_results(query: str, max_workers: int = 10) -> List[Dict[str, str]]:
-    """
-    Query all engines concurrently.
-    Returns deduplicated, BM25-ranked list of {"title", "link"} dicts.
-    Used by pipeline.py and app.py.
-    """
     raw: List[Dict[str, str]] = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -239,8 +233,5 @@ def get_search_results(query: str, max_workers: int = 10) -> List[Dict[str, str]
 
 
 def run_search_agents(query: str, max_results: int = 50) -> List[str]:
-    """
-    Backward-compatible wrapper. Returns a plain list of URL strings.
-    """
     results = get_search_results(query, max_workers=10)
     return [r["link"] for r in results][:max_results]
